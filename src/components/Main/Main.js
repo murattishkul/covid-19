@@ -42,7 +42,7 @@ const Main = ({data, selectedOption, sortedCountries, overseasData, sortedTimeDa
                 </div>
 
                 <div style={{height:'55%',  display:'flex', flexDirection:'column', justifyContent:'center', marginTop: 10, border:'1px solid black', boxShadow: '0 0 10px rgba(0,0,0,0.7)'}}>
-                    <CardTitle title="Car Accidents by Geocoded Location" />
+                    <CardTitle title="US Election Tweets by days and by country (US, UK, India)" />
                     <div style={{ height:'100%', alignItems:'center', display:'flex', justifyContent:'center', background:'#252525'}}>
                         <LineChart  data={data} style={{alignSelf:'center'}} sortedTimeData={sortedTimeData}/>
                     </div>
