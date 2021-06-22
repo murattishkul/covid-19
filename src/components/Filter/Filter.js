@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import styled from 'styled-components';
 import './Filter.css';
 
 const options = [
@@ -8,15 +9,19 @@ const options = [
     { value: 'all', label: 'All' },
 ];
 
-export const Filter = ({selectedOption, setSelectedOption}) => {
-    console.log(selectedOption)
-    return (
-      <div style={{width: 300, alignSelf:'center', marginLeft:30}}>
-        <Select
-          defaultValue={options[2]}
-          onChange={setSelectedOption}
-          options={options}
-        />
-      </div>
-    );
-}
+export const Filter = ({selectedOption, setSelectedOption}) => (
+  <FilterContainer>
+    <Select
+      defaultValue={options[2]}
+      onChange={setSelectedOption}
+      options={options}
+    />
+  </FilterContainer>
+);
+
+
+const FilterContainer = styled.div`
+    width: 300px;
+    align-self: center;
+    margin-left: 30px;
+`

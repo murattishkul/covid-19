@@ -4,6 +4,7 @@ import Header from './components/Header/Header';
 import { LoaderLarge } from './components/Loader/Loader';
 import './App.css';
 import { csv } from 'd3-fetch';
+import styled from 'styled-components';
 
 function App() {
   const [data, setData] = useState([]);
@@ -26,11 +27,9 @@ function App() {
       })
       let suka = Object.keys(hash);
       suka.sort( (a,b) => hash[a].length - hash[b].length)
-      // suka.forEach(i => console.log(i, hash[i].country, hash[i].length));
       setSortedCountries(suka)
       setOverseasData(hash)
       let murat = suka.slice(Math.max(186 - 3, 1)).map( country => (hash[country].sort((a,b)=> new Date(a.created_at) - new Date(b.created_at)))).flat()
-      console.log(murat);
       let godata = {}
       murat.forEach( countryData => { godata[countryData.created_at.substring(0,10)] = { tweet_us: 0, tweet_uk: 0, tweet_in: 0, created_at: countryData.created_at.substring(0,10) }; })
       murat.forEach( (item, index) => {
@@ -42,44 +41,20 @@ function App() {
           godata[item.created_at.substring(0,10)].tweet_in++;
         }
       })
-      // console.log(Object.keys(godata).map(i => godata[i]))
       setSortedTimeData(Object.keys(godata).map(i => godata[i]))
       setWholeData(csvData);
       console.log('end')
     }).finally(()=>setIsLoading(false));
   }, []);
 
-  console.log('this is my data ',overseasData);
-  console.log(selectedOption)
-  console.log(sortedTimeData)
-
-  /*
-    city: ""
-    collected_at: "2020-10-21 08:49:42.685150223"
-    continent: "North America"
-    country: "United States of America"
-    created_at: "2020-10-19 14:31:41"
-    lat: "36.7014631"
-    likes: "0.0"
-    long: "-118.75599740000001"
-    retweet_count: "0.0"
-    source: "Twitter for iPhone"
-    state: "California"
-    state_code: "CA"
-    tweet: "This is complete **BS**\n#Laptop\n#Biden\n#PayToPlay https://t.co/5JdJGy4EGc"
-    tweet_id: "1.318198138922922e+18"
-    user_description: "Professional, Catholic, Conservative. I need economic prosperity, not a government that wants to trade my freedom for a handout. THE DOGMA LIVES LOUDLY."
-    user_followers_count: "596.0"
-    user_id: "459018431.0"
-    user_join_date: "2012-01-09 06:01:28"
-    user_location: "California"
-    user_name: "GOPProsperity"
-    user_screen_name: "GOPProsperity
-  */
   
   return (
-    <div className="App" style={{height:'100vh', display: 'flex', flexDirection:'column', justifyContent:`${isLoading ? 'space-between' : 'space-evenly'}`, alignItems:'center', marginLeft: 30, marginRight:30}}>
-      <Header style={{height:'10%'}} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+    <AppContainer className="App" style={{}}>
+      <Header 
+        style={{height:'10%'}} 
+        selectedOption={selectedOption} 
+        setSelectedOption={setSelectedOption} 
+      />
       {
         isLoading ? 
         <LoaderLarge /> :
@@ -92,12 +67,23 @@ function App() {
           sortedTimeData={sortedTimeData}
         />
       }
-      {
-        isLoading &&
-        <div style={{height:'30%'}}></div> 
-      }
-    </div>
+      { isLoading && <DummyContainer /> }
+    </AppContainer>
   );
 }
+
+const AppContainer = styled.div`
+  height: 100vh ;
+  display: flex ;
+  flex-direction: column ;
+  justify-content: ${ props => props.isLoading ? 'space-between' : 'space-evenly'} ;
+  align-items: center ;
+  margin-left: 30px;
+  margin-right: 30px; 
+`
+
+const DummyContainer = styled.div`
+  height: 30%;
+`
 
 export default App;

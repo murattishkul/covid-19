@@ -1,32 +1,56 @@
 import React from 'react';
 import { Filter } from '../Filter'
+import styled from 'styled-components';
 
 const Header = ({selectedOption, setSelectedOption}) => {
     return (
-        <div style={{display:'flex',justifyContent:'space-between',border: '1px solid black', width: '100%', margin: 20, backgroundColor: '#252525'
-        , boxShadow: '0 0 10px rgba(0,0,0,0.7)'
-       }}>
+        <HeaderContainer>
             <Filter selectedOption={selectedOption} setSelectedOption={setSelectedOption}/>
-            <div style={{justifyContent: 'center', alignSelf:'center'}}>
-                <p style={{textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                color: '#eee',
-                fontSize:'20px'}}>
-                    US Election 2020 Tweets
-                </p>
-                
-            </div>
-            <div style={{width: 300, display:'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
-                <p style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', color: '#eee', fontSize:'13px'}}>
-                    {"Made by Murat Tishkul id20162035 "}
-                </p>
-                <p style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', color: '#eee', fontSize:'13px'}}>
-                    {" for InvoVis class of Spring 2021"}
-                </p>
-            </div>
-        </div>
+            <TitleContainer>
+                <HeaderText>US Election 2020 Tweets</HeaderText>
+            </TitleContainer>
+            <MadeByContainer>
+                <MadeBy>{"Made by Murat Tishkul id20162035 "}</MadeBy>
+                <MadeBy>{" for InvoVis class of Spring 2021"}</MadeBy>
+            </MadeByContainer>
+        </HeaderContainer>
     )
 }
+
+const HeaderContainer = styled.div`
+    width: 100%;
+    margin: 20px;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid black;
+    background-color: #252525;
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+`
+
+const HeaderText = styled.p`
+    text-overflow: ellipsis ;
+    overflow: hidden ;
+    white-space: nowrap ;
+    color: #eee ;
+    font-size: 20px ;
+`
+const TitleContainer = styled.div`
+    justify-content: center;
+    align-self: center;
+`
+
+const MadeBy = styled.p`
+    text-overflow: ellipsis ;
+    overflow: hidden ;
+    white-space: nowrap ;
+    color: #eee ;
+    font-size: 13px ;
+`
+const MadeByContainer = styled.div`
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+`
 
 export default Header; 

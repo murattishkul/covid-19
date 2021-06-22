@@ -2,8 +2,7 @@ import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export const LineChart = ({sortedTimeData}) => {
-//   static demoUrl = 'https://codesandbox.io/s/stacked-area-chart-ix341';
-    console.log(sortedTimeData)
+    // console.log(sortedTimeData)
     return (
       <ResponsiveContainer width="90%" height="90%" style={{zIndex: 999}}>
         <AreaChart
