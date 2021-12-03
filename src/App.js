@@ -7,44 +7,28 @@ import { csv } from 'd3-fetch';
 import styled from 'styled-components';
 
 function App() {
-  const [data, setData] = useState([]);
-  const [wholeData, setWholeData] = useState([]);
-  const [overseasData, setOverseasData] = useState([]);
-  const [sortedCountries, setSortedCountries] = useState([]);
-  const [sortedTimeData, setSortedTimeData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState({value:'all', label:'All'});
+  const [selectedOption, setSelectedOption] = useState({value:'Total Cases', label:'Total Cases'});
+
+  const [usData, setUsData] = useState({});
+  const [worldData, setWorldData] = useState([]);
+  const [worldTimeData, setWorldTimeData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log('start')
     setIsLoading(true);
-    csv("/hashtag_joebiden.csv").then(csvData => {
-      setData(csvData.filter( i => i.country.indexOf('America') > -1 ));
-      let hash = {}
-      let overseas = csvData.filter( i => i.country.indexOf('America') === -1 && i.country !== '' );
-      overseas.forEach( i => { 
-        hash[i.country] = hash[i.country] ? [...hash[i.country], i] : [i];
-      })
-      let suka = Object.keys(hash);
-      suka.sort( (a,b) => hash[a].length - hash[b].length)
-      setSortedCountries(suka)
-      setOverseasData(hash)
-      let murat = suka.slice(Math.max(186 - 3, 1)).map( country => (hash[country].sort((a,b)=> new Date(a.created_at) - new Date(b.created_at)))).flat()
-      let godata = {}
-      murat.forEach( countryData => { godata[countryData.created_at.substring(0,10)] = { tweet_us: 0, tweet_uk: 0, tweet_in: 0, created_at: countryData.created_at.substring(0,10) }; })
-      murat.forEach( (item, index) => {
-        if(item.country === "United Kingdom"){
-          godata[item.created_at.substring(0,10)].tweet_uk++;
-        } else if(item.country === "United States"){ 
-          godata[item.created_at.substring(0,10)].tweet_us++;
-        } else if(item.country === "India"){
-          godata[item.created_at.substring(0,10)].tweet_in++;
-        }
-      })
-      setSortedTimeData(Object.keys(godata).map(i => godata[i]))
-      setWholeData(csvData);
-      console.log('end')
-    }).finally(()=>setIsLoading(false));
+
+    csv("/usa_covid_data.csv").then( csvData => setUsData(csvData))
+      .finally(() => setIsLoading(false));
+
+    csv("/worldometer_data.csv").then( csvData => {
+      delete csvData.columns;
+      setWorldData(csvData)
+    }).finally(() => setIsLoading(false));
+
+    csv("/covid_19_clean_complete.csv").then( csvData => setWorldTimeData(csvData))
+      .finally(() => setIsLoading(false));
+
   }, []);
 
   
@@ -59,12 +43,11 @@ function App() {
         isLoading ? 
         <LoaderLarge /> :
         <Main 
-          data={data} 
-          style={{height:'90%', marginTop: 10}} 
+          style={{height:'90%', marginTop: 10}}
           selectedOption={selectedOption}
-          sortedCountries={sortedCountries}
-          overseasData={overseasData}
-          sortedTimeData={sortedTimeData}
+          usData={usData}
+          worldData={worldData}
+          worldTimeData={worldTimeData}
         />
       }
       { isLoading && <DummyContainer /> }
@@ -73,7 +56,7 @@ function App() {
 }
 
 const AppContainer = styled.div`
-  height: 100vh ;
+  // height: 100vh ;
   display: flex ;
   flex-direction: column ;
   justify-content: ${ props => props.isLoading ? 'space-between' : 'space-evenly'} ;

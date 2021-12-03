@@ -7,11 +7,11 @@ const Header = ({selectedOption, setSelectedOption}) => {
         <HeaderContainer>
             <Filter selectedOption={selectedOption} setSelectedOption={setSelectedOption}/>
             <TitleContainer>
-                <HeaderText>US Election 2020 Tweets</HeaderText>
+                <HeaderText>Covid-19 Data Visualization</HeaderText>
             </TitleContainer>
             <MadeByContainer>
                 <MadeBy>{"Made by Murat Tishkul id20162035 "}</MadeBy>
-                <MadeBy>{" for InvoVis class of Spring 2021"}</MadeBy>
+                <MadeBy>{" for Interdisciplinary Project Fall 2021"}</MadeBy>
             </MadeByContainer>
         </HeaderContainer>
     )
@@ -51,6 +51,11 @@ const MadeByContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    p {
+      margin: 0;
+    }
 `
 
 export default Header; 

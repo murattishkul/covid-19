@@ -15,7 +15,7 @@ import { geoCentroid } from "d3-geo";
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
 const colorScale = scaleQuantize()
-  .domain([1, 200])
+  .domain([1000, 20000])
   .range([
     "#ffedea",
     "#ffcec5",
@@ -28,8 +28,22 @@ const colorScale = scaleQuantize()
     "#782618"
   ]);
 
-const colorScaleAll = scaleQuantize()
-  .domain([1, 25000])
+const colorScaleCases = scaleQuantize()
+  .domain([1, 1e6])
+  .range([
+    "#ffedea",
+    "#ffcec5",
+    "#ffad9f",
+    "#ff8a75",
+    "#ff5533",
+    "#e2492d",
+    "#be3d26",
+    "#9a311f",
+    "#782618"
+  ]);
+
+const colorScaleTests = scaleQuantize()
+  .domain([1, 20e6])
   .range([
     "#ffedea",
     "#ffcec5",
@@ -54,37 +68,18 @@ const offsets = {
   DC: [49, 21]
 }
 
-export const USMap = ({data, setTooltipContent, selectedOption}) => {
-    const [mapData, setMapData] = useState([])
-    useEffect(() => {
-      let hash = {}
-      data.forEach(i => {
-        if (selectedOption?.value === 'retweets'){
-            hash[i.state] = hash[i.state] ? ( hash[i.state].retweet_count > i.retweet_count ? hash[i.state] : i) : i;
-        } else if (selectedOption?.value === 'likes'){
-            hash[i.state] = hash[i.state] ? ( hash[i.state].likes > i.likes ? hash[i.state] : i) : i;
-        } else {
-            hash[i.state] = hash[i.state] ? [...hash[i.state], i]: [i];
-        }
-      })
-      setMapData(hash);
-    }, [setMapData, data, selectedOption]);
-
-    // console.log(mapData)
-    // console.log(selectedOption)
+export const USMap = ({data, setTooltipContent, selectedOption, setPops}) => {
 
   return (
-    <div>
+    <div style={{}}>
       {
-        mapData !== [] ? 
+        data !== [] ?
         <ComposableMap projection="geoAlbersUsa" data-tip="">
         <Geographies geography={geoUrl}>
           {({ geographies }) =>{
             return geographies.map(geo => {
-              let convertedData 
-              if(selectedOption?.value !== 'all')  convertedData = Object.keys(mapData).map( i => mapData[i]);
-              else convertedData = Object.keys(mapData).map( i => ({state: i, tweets: mapData[i].length }));
-              const cur = convertedData.find(s => s.state === geo.properties.name );
+              const cur = data.find(d => d.State === geo.properties.name)
+
               return (
                   <>
                     <Geography
@@ -96,19 +91,26 @@ export const USMap = ({data, setTooltipContent, selectedOption}) => {
                       key={geo.rsmKey}
                       geography={geo}
                       fill={
-                        (selectedOption?.value === 'retweets' || selectedOption?.value === 'likes') ?
-                          colorScale(cur ? parseInt(cur.likes) : "#EEE") :
-                          colorScaleAll(cur ? parseInt(cur.tweets) : "#EEE")
+                        (selectedOption?.value === 'Total Deaths') ?
+                          colorScale(cur ? parseInt(cur["Total Deaths"]) : "#EEE") :
+                          (
+                            (selectedOption?.value === 'Total Tests') ?
+                              colorScaleTests(cur ? parseInt(cur["Total Tests"]) : "#EEE") :
+                              colorScaleCases(cur ? parseInt(cur["Total Cases"]) : "#EEE")
+                          )
                       }
                       onMouseEnter={() => {
                         const { name } = geo.properties;
-                        if (selectedOption?.value === 'retweets'){
-                          setTooltipContent(`${name} — ${parseInt(cur?.retweet_count)} maximum retweets`);
-                        } else if (selectedOption?.value === 'likes'){
-                          setTooltipContent(`${name} — ${parseInt(cur?.likes)} maximum likes`);
-                        } else {
-                          setTooltipContent(`${name} — ${parseInt(cur?.tweets)} total tweets`); 
+                        let tooltip = ""
+                        if (selectedOption?.value === 'Total Deaths' && cur){
+                          tooltip+=`${name} — ${parseInt(cur["Total Deaths"])} total deaths`;
+                        } else if (selectedOption?.value === 'Total Cases' && cur){
+                          tooltip+=`${name} — ${parseInt(cur["Total Cases"])} total Cases`;
+                        } else if (selectedOption?.value === 'Total Tests'  && cur){
+                          tooltip+=`${name} — ${parseInt(cur["Total Tests"])} total tests`;
                         }
+                        setTooltipContent(tooltip);
+                        setPops(`Population — ${parseInt(cur["Population"])}`)
                       }}
                       onMouseLeave={() => { setTooltipContent(""); }}
                     />

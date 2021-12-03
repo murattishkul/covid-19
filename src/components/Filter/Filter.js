@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import './Filter.css';
 
 const options = [
-    { value: 'retweets', label: 'Sort by Retweets' },
-    { value: 'likes', label: 'Sort by Likes' },
-    { value: 'all', label: 'All' },
+    { value: 'Total Tests', label: 'Total Tests' },
+    { value: 'Total Deaths', label: 'Total Deaths' },
+    { value: 'Total Cases', label: 'Total Cases' },
 ];
 
 export const Filter = ({selectedOption, setSelectedOption}) => (

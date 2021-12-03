@@ -1,29 +1,32 @@
-import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, {useEffect, useState} from 'react';
+import {Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 
-export const LineChart = ({sortedTimeData}) => {
-    // console.log(sortedTimeData)
-    return (
-      <ResponsiveContainer width="90%" height="90%" style={{zIndex: 999}}>
+
+export const LineChart = ({worldTimeData, date}) => {
+  console.log(worldTimeData)
+  const [lineData, setLineData] = useState([]);
+  useEffect(() => {
+    setLineData(worldTimeData.filter(data => data["Date"] === date.toISOString().slice(0, 10)));
+  }, [date, worldTimeData])
+  // console.log(lineData)
+  return (
+    <div style={{width: '100%'}}>
+
+      <ResponsiveContainer width={"100%"} height={400} style={{zIndex: 999, alignSelf: 'center'}}>
         <AreaChart
-          width={'90%'}
-          height={'80%'}
-          data={sortedTimeData}
-          margin={{
-            top: 10,
-            right: 3,
-            left: 0,
-            bottom: 10,
-          }}
+          width={500}
+          data={lineData}
+          margin={{top: 10, right: 3, left: 40, bottom: 10}}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="created_at" angle={-15} textAnchor="end"/>
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="tweet_us" stackId="1" stroke="#8884d8" fill="#8884d8" />
-          <Area type="monotone" dataKey="tweet_uk" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-          <Area type="monotone" dataKey="tweet_in" stackId="1" stroke="#ffc658" fill="#ffc658" />
+          <CartesianGrid strokeDasharray="3 3"/>
+          <XAxis dataKey="Country/Region" angle={-15} textAnchor="end"/>
+          <YAxis/>
+          <Tooltip/>
+          <Area type="monotone" dataKey="Deaths" stackId="1" stroke="#8884d8" fill="#8884d8"/>
+          <Area type="monotone" dataKey="Recovered" stackId="1" stroke="#82ca9d" fill="#82ca9d"/>
+          <Area type="monotone" dataKey="Confirmed" stackId="1" stroke="#ffc658" fill="#ffc658"/>
         </AreaChart>
       </ResponsiveContainer>
-    );
+    </div>
+  );
 }

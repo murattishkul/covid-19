@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  BarChart,
-  Bar,
-  Brush,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell
- } from "recharts";
- import { scaleQuantize } from "d3-scale";
+import React, {useState, useEffect} from 'react';
+import {Bar, BarChart, Brush, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell} from "recharts";
+import {scaleQuantize} from "d3-scale";
 
- const colorScaleBar = scaleQuantize()
-  .domain([1, 20000])
+const colorScaleBar = scaleQuantize()
+  .domain([5000, 40000])
   .range([
     "#ffedea",
     "#ffcec5",
@@ -26,33 +16,42 @@ import {
     "#782618"
   ]);
 
-export const MyBarChart = ({overseasData, sortedCountries}) => {
-    const [barData, setBarData] = useState([])
+export const MyBarChart = ({overseasData, sortedCountries, worldData}) => {
+  const [barData, setBarData] = useState([])
 
-    useEffect(()=>{
-      setBarData(sortedCountries.map(country => ({ country, tweets: overseasData[country].length })).slice(Math.max(185 - 20, -2)));
-    },[sortedCountries,overseasData])
+  useEffect(()=>{
+    console.log(worldData)
+    if(worldData!={}) setBarData(worldData?.sort((a,b)=>a["Tot Cases/1M pop"] - b["Tot Cases/1M pop"]).slice(100));
+  },[worldData])
 
-    // console.log(barData);
-
-    return (
-      <ResponsiveContainer width="100%" height={"98%"}>
+  console.log(worldData);
+    return (barData === [] ? "suka" :
+      <ResponsiveContainer width={"100%"} height={400}>
       <BarChart
-        width={"100%"} 
-        height={"100%"} 
-        data={barData} 
-        layout="vertical"
+        width={500}
+        data={barData}
         margin={{ top: 5, right: 5, left: 40, bottom: 5,}}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="tweets"/>
-        <YAxis type="category" dataKey="country"/>
-        <Tooltip />
-        <Brush dataKey="tweets" height={20} stroke="#8884d8" layout="vertical"/>
-        <Bar dataKey="tweets">
-          { barData.map( entry  => <Cell fill={colorScaleBar(entry.tweets)} />) }
+        <CartesianGrid strokeDasharray="3 3"/>
+        <YAxis dataKey="Tot Cases/1M pop" domain={[0, 40000]}/>
+        <XAxis type="category" dataKey="Country/Region"/>
+        <Tooltip/>
+        <Brush
+          dataKey="Tot Cases/1M pop"
+          height={40}
+          stroke="#8884d8"
+          layout="vertical"
+          // startIndex={100}
+          // endIndex={120}
+        />
+
+        <Bar dataKey="Tot Cases/1M pop">
+          { barData?.map( entry  => {
+            console.log(entry)
+            return <Cell fill={colorScaleBar(entry["Tot Cases/1M pop"])}/>
+          } ) }
         </Bar>
       </BarChart>
     </ResponsiveContainer>
-      );
+  );
 }
